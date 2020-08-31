@@ -19,7 +19,7 @@ on note
 	flash(2400000, 3, EVENT_NOTE)
 end on	
 
-define_task_with_args(flash,99, wait_time, button_to_flash, parent_note)
+define_task_with_args(flash,0, wait_time, button_to_flash, parent_note)
 	while (KEY_DOWN[parent_note] = 1)
 		button[button_to_flash] -> value := 1
 		wait(wait_time)
