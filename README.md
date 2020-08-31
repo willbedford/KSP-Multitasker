@@ -14,11 +14,11 @@ multitasker.init()
 
 To define a task, use the following syntax anywhere outside a callback:
 
-	define_task(name, task_id)
+	define_task(name, task_idx)
 		// code goes here
 	end_define
 
-The 'task_id' must be a unique number, starting from 0 and incrementing.
+The 'task_idx' must be a unique number, starting from 0 and incrementing.
 
 To call the task, simply use the task name as if it were a function:
 
@@ -40,8 +40,9 @@ Then, simply include the arguments when calling the task:
 
 The number of arguments must be exactly 3, and only integers can be passed through them. If you need less than 3, you can fill in the unused arguments with throwaway names.
 
-
 Any variables you use inside a task definition should be polyphonic. This ensures they are kept 'thread safe', and won't be overwritten by any other concurrent tasks or callbacks.
+
+Each instance of a task will have a unique EVENT_ID and NI_CALLBACK_ID, which is useful if you need to use commands such as stop_wait(). In effect, a task can be thought of as a custom callback.
 
 It is recommended that you use the latest version of the SublimeKSP compiler, and make sure 'Optimize Compiled Code' is enabled.
 
