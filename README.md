@@ -13,6 +13,7 @@ Using the multitasker is simple - add the following line to your init callback:
 multitasker.init()
 
 To define a task, use the following syntax anywhere outside a callback:
+
 	define_task(name, task_id)
 		// code goes here
 	end_define
