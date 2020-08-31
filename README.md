@@ -1,7 +1,6 @@
-# KSP-Multitasker
-An importable KSP script for defining and running triggering concurrent asynchronous tasks. 
-
-A user friendly way to create multiple asynchronous processes in KSP. A 'task' behaves somewhat like a function, except it will run asynchronously from the rest of the code in the parent callback. 
+# KSP Multitasker
+ 
+A user friendly way to create concurrent asynchronous routines in KSP (Kontakt Script Processor). A 'task' behaves somewhat like a function, except it will run asynchronously from the rest of the code in the parent callback. 
 
 With a regular KSP function (whether 'called' or inline), the script will jump to the start of the function definition, run the code in the function, and then jump back to the place the function was called, and continue running the code in that callback. This means that if the function contains a 'wait', the parent callback will also be affected by the wait.
 
@@ -9,8 +8,11 @@ When a 'task' is called, the code inside the task will start running, but the pa
 
 ## Usage
 
+Download 'multitasker.ksp' and add it to your script directory. You can optionally download the example scripts to see it in action.
+
 Using the multitasker is simple - add the following line to your init callback:
-multitasker.init()
+
+	multitasker.init()
 
 To define a task, use the following syntax anywhere outside a callback:
 
@@ -18,7 +20,7 @@ To define a task, use the following syntax anywhere outside a callback:
 		// code goes here
 	end_define
 
-The 'task_idx' must be a unique number, starting from 0 and incrementing.
+The 'task_idx' must be a unique number, starting from 0 and incrementing with each new task definition you create.
 
 To call the task, simply use the task name as if it were a function:
 
@@ -44,11 +46,11 @@ Any variables you use inside a task definition should be polyphonic. This ensure
 
 Each instance of a task will have a unique EVENT_ID and NI_CALLBACK_ID, which is useful if you need to use commands such as stop_wait(). In effect, a task can be thought of as a custom callback.
 
-It is recommended that you use the latest version of the SublimeKSP compiler, and make sure 'Optimize Compiled Code' is enabled.
+It is recommended that you use the latest version of the SublimeKSP compiler (https://github.com/nojanath/SublimeKSP), and make sure 'Optimize Compiled Code' is enabled.
 
 
 ## Caveats
-You are advised not to use the custom event par 'EVENT_PAR_0' for any other note events, but if you must, make sure the value is always less than 20000000.
+You are advised not to use the custom event par 'EVENT_PAR_0' for any note events in your main script, but if you must, make sure the value is always less than 20000000.
 
 You can't call tasks from within other tasks. You also can't call tasks from the release callback.
 
