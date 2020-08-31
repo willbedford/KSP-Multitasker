@@ -59,3 +59,32 @@ Since the multitasker uses the release callback internally, you will need to use
 	on_release
 
 	end_on
+
+## Example
+
+
+	import "multitasker.ksp"
+
+	on init
+		declare ui_button button[4]
+		multitasker.init()
+	end on
+
+	on note
+		flash(200000, 0, EVENT_NOTE)
+		flash(440000, 1, EVENT_NOTE)
+		flash(1004700, 2, EVENT_NOTE)
+		flash(2400000, 3, EVENT_NOTE)
+	end on	
+
+	define_task_with_args(flash,0, wait_time, button_to_flash, parent_note)
+		while (KEY_DOWN[parent_note] = 1)
+			button[button_to_flash] -> value := 1
+			wait(wait_time)
+			button[button_to_flash] -> value := 0
+			wait(wait_time)
+		end while
+	end_define
+
+
+![](example2.gif)
