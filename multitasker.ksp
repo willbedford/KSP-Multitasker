@@ -96,9 +96,6 @@ if you need to handle releases in your main script.
 macro multitasker.init()
 	declare _mt.note_id
 	declare const _mt.TASK_IDX_OFFSET := 20000000
-	declare _mt.arg1t
-	declare _mt.arg2t
-	declare _mt.arg3t
 end macro
 
 macro _mt.initialise_functions(#task_idx#)
@@ -128,9 +125,9 @@ macro define_task_with_args(name, #task_idx#, #arg1#, #arg2#, #arg3#)
 	end function
 
 	function _mt.task_definition_#task_idx# override
-		declare polyphonic #arg1# := _mt.arg1t
-		declare polyphonic #arg2# := _mt.arg2t
-		declare polyphonic #arg3# := _mt.arg3t
+		declare polyphonic #arg1# := get_event_par(EVENT_ID, EVENT_PAR_1)
+		declare polyphonic #arg2# := get_event_par(EVENT_ID, EVENT_PAR_2)
+		declare polyphonic #arg3# := get_event_par(EVENT_ID, EVENT_PAR_3)
 end macro
 
 macro end_define
@@ -151,9 +148,9 @@ end macro
 
 on release
 	if get_event_par(EVENT_ID, EVENT_PAR_0) >= _mt.TASK_IDX_OFFSET
-		_mt.arg1t := get_event_par(EVENT_ID, EVENT_PAR_1)
-		_mt.arg2t := get_event_par(EVENT_ID, EVENT_PAR_2)
-		_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
+		//_mt.arg1t := get_event_par(EVENT_ID, EVENT_PAR_1)
+		//_mt.arg2t := get_event_par(EVENT_ID, EVENT_PAR_2)
+		//_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
 		disallow_group(ALL_GROUPS)
 		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_IDX_OFFSET)
 			iterate_macro(_mt.rcb_invoke_task) := 0 to _mt.MAX_TASKS
@@ -168,4 +165,3 @@ macro _mt.rcb_invoke_task(#task_idx#)
 
 		_mt.task_definition_#task_idx#
 end macro
-
