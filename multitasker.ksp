@@ -76,7 +76,7 @@ if you need to handle releases in your main script.
 
 //this can be reduced to speed up compile time, or increased if you need more task definitions
 	
-	define _MT.MAX_TASKS := 100 
+	define _mt.MAX_TASKS := 100 
 
 
 
@@ -106,7 +106,7 @@ macro _mt.initialise_functions(#task_idx#)
 	end function
 end macro
 
-iterate_macro(_mt.initialise_functions) := 0 to _MT.MAX_TASKS
+iterate_macro(_mt.initialise_functions) := 0 to _mt.MAX_TASKS
 
 macro define_task(name, #task_idx#)
 	function name
@@ -156,7 +156,7 @@ on release
 		_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
 		disallow_group(ALL_GROUPS)
 		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_IDX_OFFSET)
-			iterate_macro(_mt.rcb_invoke_task) := 0 to _MT.MAX_TASKS
+			iterate_macro(_mt.rcb_invoke_task) := 0 to _mt.MAX_TASKS
 		end select
 	else
 		_mt.rcb
