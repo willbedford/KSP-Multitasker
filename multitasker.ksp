@@ -22,11 +22,11 @@ Using the multitasker is simple - add the following line to your init callback:
 multitasker.init()
 
 To define a task, use the following syntax anywhere outside a callback:
-	define_task(name, task_id)
+	define_task(name, task_idx)
 		// code goes here
 	end_define
 
-The 'task_id' must be a unique number, starting from 0 and incrementing.
+The 'task_idx' must be a unique number, starting from 0 and incrementing.
 
 To call the task, simply use the task name as if it were a function:
 
@@ -35,7 +35,7 @@ To call the task, simply use the task name as if it were a function:
 	end on
 
 You can also pass arguments to the task. To do so, use this alternative task definition syntax:
-	define_task_with_args(name, task_id, arg1, arg2, arg3)
+	define_task_with_args(name, task_idx, arg1, arg2, arg3)
 		// code goes here
 	end_define
 
@@ -47,6 +47,8 @@ Then, simply include the arguments when calling the task:
 The number of arguments must be exactly 3, and only integers can be passed through them. 
 If you need less than 3, you can fill in the unused arguments with throwaway names.
 
+Each instance of a task will have a unique EVENT_ID and NI_CALLBACK_ID, which is useful if you 
+need to use commands such as stop_wait(). In effect, a task can be thought of as a custom callback.
 
 Any variables you use inside a task definition should be polyphonic. This ensures they are kept
 'thread safe', and won't be overwritten by any other concurrent tasks or callbacks.
@@ -93,39 +95,39 @@ if you need to handle releases in your main script.
 // ------------------------------------------------------------------------------------------------
 macro multitasker.init()
 	declare _mt.note_id
-	declare const _mt.TASK_ID_OFFSET := 20000000
+	declare const _mt.TASK_IDX_OFFSET := 20000000
 	declare _mt.arg1t
 	declare _mt.arg2t
 	declare _mt.arg3t
 end macro
 
-macro _mt.initialise_functions(#task_id#)
-	function _mt.task_definition_#task_id#
+macro _mt.initialise_functions(#task_idx#)
+	function _mt.task_definition_#task_idx#
 	end function
 end macro
 
 iterate_macro(_mt.initialise_functions) := 0 to MAX_TASKS
 
-macro define_task(name, #task_id#)
+macro define_task(name, #task_idx#)
 	function name
 		_mt.note_id := play_note(0, 1, 0, 1)
-		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_ID_OFFSET + #task_id#)
+		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_IDX_OFFSET + #task_idx#)
 	end function
 	
-	function _mt.task_definition_#task_id# override
+	function _mt.task_definition_#task_idx# override
 end macro
 
-macro define_task_with_args(name, #task_id#, #arg1#, #arg2#, #arg3#)
+macro define_task_with_args(name, #task_idx#, #arg1#, #arg2#, #arg3#)
 	function name(arg1, arg2, arg3)
 		_mt.note_id := play_note(0, 1, 0, 1)
 		set_event_par_arr(_mt.note_id, EVENT_PAR_ALLOW_GROUP, 0, ALL_GROUPS)
-		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_ID_OFFSET + #task_id#)
+		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_IDX_OFFSET + #task_idx#)
 		set_event_par(_mt.note_id, EVENT_PAR_1, arg1)
 		set_event_par(_mt.note_id, EVENT_PAR_2, arg2)
 		set_event_par(_mt.note_id, EVENT_PAR_3, arg3)
 	end function
 
-	function _mt.task_definition_#task_id# override
+	function _mt.task_definition_#task_idx# override
 		declare polyphonic #arg1# := _mt.arg1t
 		declare polyphonic #arg2# := _mt.arg2t
 		declare polyphonic #arg3# := _mt.arg3t
@@ -148,12 +150,12 @@ macro end_on
 end macro
 
 on release
-	if get_event_par(EVENT_ID, EVENT_PAR_0) >= _mt.TASK_ID_OFFSET
+	if get_event_par(EVENT_ID, EVENT_PAR_0) >= _mt.TASK_IDX_OFFSET
 		_mt.arg1t := get_event_par(EVENT_ID, EVENT_PAR_1)
 		_mt.arg2t := get_event_par(EVENT_ID, EVENT_PAR_2)
 		_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
 		disallow_group(ALL_GROUPS)
-		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_ID_OFFSET)
+		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_IDX_OFFSET)
 			iterate_macro(_mt.rcb_invoke_task) := 0 to MAX_TASKS
 		end select
 	else
@@ -161,9 +163,9 @@ on release
 	end if
 end on
 
-macro _mt.rcb_invoke_task(#task_id#)
-	case #task_id#
+macro _mt.rcb_invoke_task(#task_idx#)
+	case #task_idx#
 
-		_mt.task_definition_#task_id#
+		_mt.task_definition_#task_idx#
 end macro
 
