@@ -1,6 +1,5 @@
 # KSP-Multitasker
-An importable KSP script for defining and running triggering concurrent asynchronous tasks. 
-
+ 
 A user friendly way to create multiple asynchronous processes in KSP. A 'task' behaves somewhat like a function, except it will run asynchronously from the rest of the code in the parent callback. 
 
 With a regular KSP function (whether 'called' or inline), the script will jump to the start of the function definition, run the code in the function, and then jump back to the place the function was called, and continue running the code in that callback. This means that if the function contains a 'wait', the parent callback will also be affected by the wait.
