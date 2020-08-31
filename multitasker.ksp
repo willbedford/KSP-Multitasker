@@ -1,0 +1,169 @@
+//------------------------------------------------------------------------------------------------
+//--------------------------------------- KSP Multitasker ----------------------------------------
+//----------------------------------- Written By Will Bedford ------------------------------------
+//------------------------------------------------------------------------------------------------
+
+{ 
+A user friendly way to create multiple asynchronous processes in KSP. 
+A 'task' behaves somewhat like a function, except when it is called, it will run asynchronously
+from the rest of the code in the callback. 
+
+With a regular KSP function (whether 'called' or inline), the script will jump to the start of the
+function definition, run the code in the function, and then jump back to the place the function was
+called, and continue running the code in that callback. This means that if the function contains a 
+'wait', the parent callback will also be affected by the wait.
+
+When a 'task' is called, the code inside the task will start running, but the parent callback will
+carry on running, even if there is a 'wait' inside the task.
+
+-------------------------------------------- USAGE -----------------------------------------------
+
+Using the multitasker is simple - add the following line to your init callback:
+multitasker.init()
+
+To define a task, use the following syntax anywhere outside a callback:
+	define_task(name, task_id)
+		// code goes here
+	end_define
+
+The 'task_id' must be a unique number, starting from 0 and incrementing.
+
+To call the task, simply use the task name as if it were a function:
+
+	on note
+		task_name() 
+	end on
+
+You can also pass arguments to the task. To do so, use this alternative task definition syntax:
+	define_task_with_args(name, task_id, arg1, arg2, arg3)
+		// code goes here
+	end_define
+
+Then, simply include the arguments when calling the task:
+	on note
+		task_name(30, EVENT_NOTE, some_variable)
+	end on
+
+The number of arguments must be exactly 3, and only integers can be passed through them. 
+If you need less than 3, you can fill in the unused arguments with throwaway names.
+
+
+Any variables you use inside a task definition should be polyphonic. This ensures they are kept
+'thread safe', and won't be overwritten by any other concurrent tasks or callbacks.
+
+It is recommended that you use the latest version of the SublimeKSP compiler, 
+and make sure 'Optimize Compiled Code' is enabled.
+
+
+-------------------------------------------- CAVEATS ----------------------------------------------
+You are advised not to use the custom event par 'EVENT_PAR_0' for any other note events, but if you
+must, make sure the value is always less than 20000000.
+
+You can't call tasks from within other tasks. You also can't call tasks from the release callback.
+
+Since the multitasker uses the release callback internally, you will need to use this pseudo-callback
+if you need to handle releases in your main script. 
+
+	on_release
+
+	end_on
+
+}
+
+//------------------------------------- Optional Settings -----------------------------------------
+
+//this can be reduced to speed up compile time, or increased if you need more task definitions
+	
+	define MAX_TASKS := 100 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------------------
+macro multitasker.init()
+	declare _mt.note_id
+	declare const _mt.TASK_ID_OFFSET := 20000000
+	declare _mt.arg1t
+	declare _mt.arg2t
+	declare _mt.arg3t
+end macro
+
+macro _mt.initialise_functions(#task_id#)
+	function _mt.task_definition_#task_id#
+	end function
+end macro
+
+iterate_macro(_mt.initialise_functions) := 0 to MAX_TASKS
+
+macro define_task(name, #task_id#)
+	function name
+		_mt.note_id := play_note(0, 1, 0, 1)
+		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_ID_OFFSET + #task_id#)
+	end function
+	
+	function _mt.task_definition_#task_id# override
+end macro
+
+macro define_task_with_args(name, #task_id#, #arg1#, #arg2#, #arg3#)
+	function name(arg1, arg2, arg3)
+		_mt.note_id := play_note(0, 1, 0, 1)
+		set_event_par_arr(_mt.note_id, EVENT_PAR_ALLOW_GROUP, 0, ALL_GROUPS)
+		set_event_par(_mt.note_id, EVENT_PAR_0, _mt.TASK_ID_OFFSET + #task_id#)
+		set_event_par(_mt.note_id, EVENT_PAR_1, arg1)
+		set_event_par(_mt.note_id, EVENT_PAR_2, arg2)
+		set_event_par(_mt.note_id, EVENT_PAR_3, arg3)
+	end function
+
+	function _mt.task_definition_#task_id# override
+		declare polyphonic #arg1# := _mt.arg1t
+		declare polyphonic #arg2# := _mt.arg2t
+		declare polyphonic #arg3# := _mt.arg3t
+end macro
+
+macro end_define
+	end function
+end macro
+
+function _mt.rcb
+
+end function
+
+macro on_release
+	function _mt.rcb override
+end macro
+
+macro end_on
+	end function
+end macro
+
+on release
+	if get_event_par(EVENT_ID, EVENT_PAR_0) >= _mt.TASK_ID_OFFSET
+		_mt.arg1t := get_event_par(EVENT_ID, EVENT_PAR_1)
+		_mt.arg2t := get_event_par(EVENT_ID, EVENT_PAR_2)
+		_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
+		disallow_group(ALL_GROUPS)
+		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_ID_OFFSET)
+			iterate_macro(_mt.rcb_invoke_task) := 0 to MAX_TASKS
+		end select
+	else
+		_mt.rcb
+	end if
+end on
+
+macro _mt.rcb_invoke_task(#task_id#)
+	case #task_id#
+
+		_mt.task_definition_#task_id#
+end macro
+

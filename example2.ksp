@@ -1,0 +1,29 @@
+{
+	Multitasker Example 2
+	4 buttons flash on and off at different speeds, while a note is held.
+	This example shows how arguments can be passed into the task. The EVENT_NOTE from the
+	parent callback is passed to the task, so it can check if the note is still held.
+}
+
+import "multitasker.ksp"
+
+on init
+	declare ui_button button[4]
+	multitasker.init()
+end on
+
+on note
+	flash(10000, 0, EVENT_NOTE)
+	flash(152000, 1, EVENT_NOTE)
+	flash(504700, 2, EVENT_NOTE)
+	flash(1200000, 3, EVENT_NOTE)
+end on	
+
+define_task_with_args(flash,99, wait_time, button_to_flash, parent_note)
+	while (KEY_DOWN[parent_note] = 1)
+		button[button_to_flash] -> value := 1
+		wait(wait_time)
+		button[button_to_flash] -> value := 0
+		wait(wait_time)
+	end while
+end_define

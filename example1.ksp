@@ -1,0 +1,48 @@
+{
+	Multitasker Example 1
+	When the patch is loaded, the various UI controls will being to animate.
+	Each control has its own unique wait time (ranomized on load), and the animation routines run concurrently.
+}
+
+import "multitasker.ksp"
+
+on init
+	multitasker.init()
+	declare ui_slider slider (0, 99)
+	declare ui_knob knob (0, 99, 1)
+	declare ui_table table[4](3, 3, 99)
+	declare polyphonic wait_time
+end on
+
+on persistence_changed
+	animate_silider()
+	animate_knob()
+	animate_table(0, -1, -1)
+	animate_table(1, -1, -1)
+	animate_table(2, -1, -1)
+	animate_table(3, -1, -1)
+end on
+
+define_task(animate_silider,0)
+	wait_time := random(5000, 50000) //since wait_time is a polyphonic variable, there is no conflict when multiple tasks are using it
+	while(1=1)
+		slider := (slider + 1) mod 100
+		wait(wait_time)
+	end while
+end_define
+
+define_task(animate_knob,1)
+	wait_time := random(5000, 50000)
+	while(1=1)
+		knob := (knob + 1) mod 100
+		wait(wait_time)
+	end while
+end_define
+
+define_task_with_args(animate_table,2, table_idx, unused1, unused2)
+	wait_time := random(5000, 50000)
+	while(1=1)
+		table[table_idx] := (table[table_idx] + 1) mod 100
+		wait(wait_time)
+	end while
+end_define
