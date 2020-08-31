@@ -30,7 +30,7 @@ To call the task, simply use the task name as if it were a function:
 
 You can also pass arguments to the task. To do so, use this alternative task definition syntax:
 
-	define_task_with_args(name, task_id, arg1, arg2, arg3)
+	define_task_with_args(name, task_idx, arg1, arg2, arg3)
 		// code goes here
 	end_define
 
