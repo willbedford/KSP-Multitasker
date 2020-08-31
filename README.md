@@ -1,6 +1,6 @@
 # KSP Multitasker
  
-A user friendly way to create multiple asynchronous processes in KSP (Kontakt Script Processor). A 'task' behaves somewhat like a function, except it will run asynchronously from the rest of the code in the parent callback. 
+A user friendly way to create concurrent asynchronous routines in KSP (Kontakt Script Processor). A 'task' behaves somewhat like a function, except it will run asynchronously from the rest of the code in the parent callback. 
 
 With a regular KSP function (whether 'called' or inline), the script will jump to the start of the function definition, run the code in the function, and then jump back to the place the function was called, and continue running the code in that callback. This means that if the function contains a 'wait', the parent callback will also be affected by the wait.
 
