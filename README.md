@@ -52,7 +52,7 @@ It is recommended that you use the latest version of the SublimeKSP compiler (ht
 ## Caveats
 You are advised not to use the custom event par 'EVENT_PAR_0' for any note events in your main script, but if you must, make sure the value is always less than 20000000.
 
-You can't call tasks from within other tasks. You also can't call tasks from the release callback.
+You can't call tasks from within other tasks. You also can't call tasks from the release callback. One possible workaround would be to call pgs_set_key_val() to trigger a PGS callback, then call the task from the PGS callback.
 
 Since the multitasker uses the release callback internally, you will need to use this pseudo-callback if you need to handle releases in your main script. 
 
