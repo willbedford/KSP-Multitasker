@@ -10,7 +10,7 @@ When a 'task' is called, the code inside the task will start running, but the pa
 
 Download 'multitasker.ksp' and add it to your script directory. You can optionally download the example scripts to see it in action.
 
-Using the multitasker is simple - add the following line to your init callback:
+Using the multitasker is simple - import multitasker.ksp into your main script and add the following line to your init callback:
 
 	multitasker.init()
 
