@@ -9,6 +9,8 @@ When a 'task' is called, the code inside the task will start running, but the pa
 
 ## Usage
 
+Download 'multitasker.ksp' and add it to your script directory. You can optionally download the example scripts to see it in action.
+
 Using the multitasker is simple - add the following line to your init callback:
 multitasker.init()
 
@@ -44,11 +46,11 @@ Any variables you use inside a task definition should be polyphonic. This ensure
 
 Each instance of a task will have a unique EVENT_ID and NI_CALLBACK_ID, which is useful if you need to use commands such as stop_wait(). In effect, a task can be thought of as a custom callback.
 
-It is recommended that you use the latest version of the SublimeKSP compiler, and make sure 'Optimize Compiled Code' is enabled.
+It is recommended that you use the latest version of the SublimeKSP compiler (https://github.com/nojanath/SublimeKSP), and make sure 'Optimize Compiled Code' is enabled.
 
 
 ## Caveats
-You are advised not to use the custom event par 'EVENT_PAR_0' for any other note events, but if you must, make sure the value is always less than 20000000.
+You are advised not to use the custom event par 'EVENT_PAR_0' for any note events in your main script, but if you must, make sure the value is always less than 20000000.
 
 You can't call tasks from within other tasks. You also can't call tasks from the release callback.
 
