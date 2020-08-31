@@ -20,7 +20,7 @@ To define a task, use the following syntax anywhere outside a callback:
 		// code goes here
 	end_define
 
-The 'task_idx' must be a unique number, starting from 0 and incrementing.
+The 'task_idx' must be a unique number, starting from 0 and incrementing with each new task definition you create.
 
 To call the task, simply use the task name as if it were a function:
 
