@@ -148,9 +148,6 @@ end macro
 
 on release
 	if get_event_par(EVENT_ID, EVENT_PAR_0) >= _mt.TASK_IDX_OFFSET
-		//_mt.arg1t := get_event_par(EVENT_ID, EVENT_PAR_1)
-		//_mt.arg2t := get_event_par(EVENT_ID, EVENT_PAR_2)
-		//_mt.arg3t := get_event_par(EVENT_ID, EVENT_PAR_3)
 		disallow_group(ALL_GROUPS)
 		select (get_event_par(EVENT_ID, EVENT_PAR_0) - _mt.TASK_IDX_OFFSET)
 			iterate_macro(_mt.rcb_invoke_task) := 0 to _mt.MAX_TASKS
