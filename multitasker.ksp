@@ -58,7 +58,7 @@ and make sure 'Optimize Compiled Code' is enabled.
 
 
 -------------------------------------------- CAVEATS ----------------------------------------------
-You are advised not to use the custom event par 'EVENT_PAR_0' for any other note events, but if you
+You are advised not to use the custom event par 'EVENT_PAR_0' for any note events in your main script, but if you
 must, make sure the value is always less than 20000000.
 
 You can't call tasks from within other tasks. You also can't call tasks from the release callback.
