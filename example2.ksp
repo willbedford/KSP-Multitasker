@@ -13,10 +13,10 @@ on init
 end on
 
 on note
-	flash(10000, 0, EVENT_NOTE)
-	flash(152000, 1, EVENT_NOTE)
-	flash(504700, 2, EVENT_NOTE)
-	flash(1200000, 3, EVENT_NOTE)
+	flash(200000, 0, EVENT_NOTE)
+	flash(440000, 1, EVENT_NOTE)
+	flash(1004700, 2, EVENT_NOTE)
+	flash(2400000, 3, EVENT_NOTE)
 end on	
 
 define_task_with_args(flash,99, wait_time, button_to_flash, parent_note)
